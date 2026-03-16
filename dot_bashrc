@@ -1,0 +1,10 @@
+for file in \
+  "$HOME/.config/bash/00-env.sh" \
+  "$HOME/.config/bash/10-path.sh" \
+  "$HOME/.config/bash/20-conda.sh" \
+  "$HOME/.config/bash/30-integrations.sh" \
+  "$HOME/.config/bash/90-local.sh" \
+  "$HOME/.config/bash/99-secrets.sh"
+do
+  [ -r "$file" ] && . "$file"
+done

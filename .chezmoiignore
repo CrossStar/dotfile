@@ -1,0 +1,4 @@
+.config/zsh/90-local.zsh
+.config/zsh/99-secrets.zsh
+.config/bash/90-local.sh
+.config/bash/99-secrets.sh
