@@ -1,0 +1,7 @@
+# This file contains fish universal variable definitions.
+# VERSION: 3.0
+SETUVAR __fish_initialized:4300
+SETUVAR __fish_webconfig_theme_notification:set\x2dtheme\x2dv1\x2d\x231
+SETUVAR fish_greeting:\x1d
+SETUVAR fish_prompt_pwd_dir_length:0
+SETUVAR fish_user_paths:/home/sydney/\x2enpm\x2dglobal/bin\x1e/home/sydney/\x2elocal/bin
