@@ -2,6 +2,7 @@
 if status is-interactive
     bind \cl history-token-search-backward
     bind \co y-pick
+    set -gx EDITOR micro
 end
 
 set -U fish_greeting
