@@ -1,50 +1,63 @@
+# 基础设置
+set -g fish_greeting ""
+set -g fish_prompt_pwd_dir_length 0
 
+# 只在交互式 shell 中加载这些配置
 if status is-interactive
+    set -gx EDITOR micro
+
     bind \cl history-token-search-backward
     bind \co y-pick
-    set -gx EDITOR micro
-end
 
-set -U fish_greeting
-set -U fish_prompt_pwd_dir_length 0
-
-abbr -a --position anywhere -- --help '--help | bat -plhelp'
-abbr -a --position anywhere -- -h '-h | bat -plhelp'
-abbr -a ef 'micro ~/.config/fish/config.fish'
-abbr -a sf 'source ~/.config/fish/config.fish'
-
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -lh --icons --git --group-directories-first'
-alias la='eza -a --icons --group-directories-first'
-
-function y-pick
-    set -l tmp (mktemp -t "yazi-picker.XXXXXX")
-    yazi --chooser-file="$tmp"
-    
-    if test -f "$tmp"
-        set -l chosen (command cat -- "$tmp")
-        if test -n "$chosen"
-            commandline -i "$chosen"
-        end
+    if command -q bat
+        abbr -a --position anywhere -- --help '--help 2>&1 | bat -plhelp'
+        abbr -a --position anywhere -- -h '-h 2>&1 | bat -plhelp'
     end
-    
-    rm -f -- "$tmp"
-    
-    commandline -f repaint
+
+    abbr -a ef 'chezmoi edit ~/.config/fish/config.fish && chezmoi apply'
+    abbr -a sf 'source ~/.config/fish/config.fish'
+
+    if command -q eza
+        alias ls='eza --icons --group-directories-first'
+        alias ll='eza -lh --icons --git --group-directories-first'
+        alias la='eza -a --icons --group-directories-first'
+    end
+
+    function y-pick
+        if not command -q yazi
+            echo "yazi not found"
+            return 127
+        end
+
+        set -l tmp (mktemp -t "yazi-picker.XXXXXX")
+        yazi --chooser-file="$tmp"
+
+        if test -f "$tmp"
+            set -l chosen (command cat -- "$tmp")
+            if test -n "$chosen"
+                commandline -i "$chosen"
+            end
+        end
+
+        rm -f -- "$tmp"
+        commandline -f repaint
+    end
 end
 
+# VS Code / WSL code 命令
 set -l vscode_win_path "/mnt/d/Microsoft VS Code/bin/code"
 
-if test -f "$vscode_win_path"
-    function code --wraps="$vscode_win_path"
-        set -l bin_path "/mnt/d/Microsoft VS Code/bin/code"
-        "$bin_path" $argv
+if test -x "$vscode_win_path"
+    function code
+        "/mnt/d/Microsoft VS Code/bin/code" $argv
     end
-else
-    set -l auto_path (which code.exe 2>/dev/null | sed 's/.exe//')
-    if test -n "$auto_path"
-        alias code="$auto_path"
+else if command -q code.exe
+    function code
+        code.exe $argv
     end
 end
 
-zoxide init fish | source
+# zoxide
+if command -q zoxide
+    zoxide init fish | source
+end
